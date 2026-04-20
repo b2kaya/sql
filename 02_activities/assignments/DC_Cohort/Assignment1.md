@@ -106,6 +106,8 @@ Please do not pick the exact same tables that I have already diagrammed. For exa
 	- <img src="./images/01_farmers_market_conceptual_model.png" width="600">
 - The column names can be found in a few spots (DB Schema window in the bottom right, the Database Structure tab in the main window by expanding each table entry, at the top of the Browse Data tab in the main window)
 
+Link here: https://drive.google.com/file/d/1mqU3fiqDBzUkBVD7ptEddkprPqbDvILI/view?usp=sharing
+
 ***
 
 ## Section 2:
@@ -121,28 +123,101 @@ Steps to complete this part of the assignment:
 
 #### SELECT
 1. Write a query that returns everything in the customer table.
+SELECT * 
+FROM 
+	customer
 2. Write a query that displays all of the columns and 10 rows from the customer table, sorted by customer_last_name, then customer_first_ name.
+SELECT *
+FROM 
+	customer
+ORDER BY
+	customer_last_name,
+	customer_first_name,
+LIMIT
+	10;
 
 <div align="center">-</div>
 
 #### WHERE
 1. Write a query that returns all customer purchases of product IDs 4 and 9. Limit to 25 rows of output.
+SELECT 
+	customer_id
+FROM 
+	customer
+WHERE
+	customer_id = 4 OR customer_id = 19
+LIMIT
+	25;
 2. Write a query that returns all customer purchases and a new calculated column 'price' (quantity * cost_to_customer_per_qty), filtered by customer IDs between 8 and 10 (inclusive) using either:
 	1.  two conditions using AND
 	2.  one condition using BETWEEN
 Limit to 25 rows of output.
+
+SELECT 
+	customer_id,
+	quantity,
+	cost_to_customer_per_qty,
+	quantity * cost_to_customer_per_qty AS price
+FROM 
+	customer_purchases
+WHERE
+	customer_id BETWEEN 8 AND 10
+LIMIT
+	25;
 
 <div align="center">-</div>
 
 #### CASE
 1. Products can be sold by the individual unit or by bulk measures like lbs. or oz. Using the product table, write a query that outputs the `product_id` and `product_name` columns and add a column called `prod_qty_type_condensed` that displays the word “unit” if the `product_qty_type` is “unit,” and otherwise displays the word “bulk.”
 
+SELECT 
+	product_id,
+	product_name
+	CASE
+		WHEN product_qty_type = 'unit' THEN 'unit
+		ELSE 'bulk'
+END AS
+	'prod_qty_type_condensed'
+FROM
+	product;
+
+
 2. We want to flag all of the different types of pepper products that are sold at the market. Add a column to the previous query called `pepper_flag` that outputs a 1 if the product_name contains the word “pepper” (regardless of capitalization), and otherwise outputs 0.
+
+SELECT 
+	product_id,
+	product_name,
+	CASE
+		WHEN product_qty_type = 'unit' THEN 'unit'
+		ELSE 'bulk'
+END AS
+	'prod_qty_type_condensed',
+	CASE
+		WHEN product_name LIKE '%pepper%' THEN 1
+		ELSE 0
+END AS
+	'pepper_flag'
+FROM
+	product;
 
 <div align="center">-</div>
 
 #### JOIN
 1. Write a query that `INNER JOIN`s the `vendor` table to the `vendor_booth_assignments` table on the `vendor_id` field they both have in common, and sorts the result by `market_date` then `vendor_name`. Limit to 24 rows of output. 
+
+SELECT
+	vendor,
+	vendor_booth_assignments.*
+FROM
+	vendor
+JOIN
+	vendor_booth_assignments
+ON
+	vendor.vendor_id = vendor_booth_assignments.vendor_id
+ORDER BY
+	vendor_booth_assignments.market_date,
+	vendor.vendor_name,
+LIMIT 24;
 
 ***
 
@@ -159,9 +234,19 @@ Steps to complete this part of the assignment:
 
 #### AGGREGATE
 1. Write a query that determines how many times each vendor has rented a booth at the farmer’s market by counting the vendor booth assignments per `vendor_id`.
+SELECT
+	vendor_id,
+COUNT(*) AS booth_rentals
+FROM
+	vendor_booth_assignments
+GROUP BY
+	vendor_id;
+
 2. The Farmer’s Market Customer Appreciation Committee wants to give a bumper sticker to everyone who has ever spent more than $2000 at the market. Write a query that generates a list of customers for them to give stickers to, sorted by last name, then first name.
    
 **HINT**: This query requires you to join two tables, use an aggregate function, and use the HAVING keyword.
+
+Sorry, I could not do this one...
 
 <div align="center">-</div>
 
@@ -182,10 +267,29 @@ To insert the new row use VALUES, specifying the value you want for each column:
 
 Limit to 25 rows of output. 
 
+SELECT
+	customer_id,
+	strftime ('%m', market_date) AS purchase_month,
+	strftime ('%Y', market_date) AS purchase_year
+FROM
+	customer_purchases
+LIMIT 25; 
+
 2. Using the previous query as a base, determine how much money each customer spent in April 2022. Remember that money spent is `quantity*cost_to_customer_per_qty`.
    
 **HINTS**: you will need to AGGREGATE, GROUP BY, and filter...but remember, STRFTIME returns a STRING for your WHERE statement...
 AND be sure you remove the LIMIT from the previous query before aggregating!! 
+
+SELECT
+	customer_id,
+	SUM(quantity*cost_to_customer_per_qty) AS total_spent
+FROM
+	customer_purchases
+WHERE
+	strftime ('%m', market_date) = '04'
+	AND strftime ('%Y', market_date) = '2022'
+GROUP BY
+	customer_id
 
 *** 
 
@@ -211,3 +315,4 @@ Consider, for example, concepts of fariness, inequality, social structures, marg
 ```
 Your thoughts...
 ```
+Data systems can legitimize certain social structures over others--as was discussed in this article. If the schema allows for coding for any a set of relational pairs, then anyone who falls outside of that becomes de-legitimized, and is excluded from their spot in vital data infrastructure. There are severe repercussions to this omission: civilians can have their requests for social welfare/pensions/tax returns denied or voided. In a hypothetical jurisdiction the fact of their absence in the databases might constitute a criminal offence--even though the civilians had no role in designing the framework of these databases. Given that most of our institutions and their technological infrastructure are designed to accommodate for not the tails, but the center of the normal curve, people with minoritized identities (lower class/racialized/not straight or cis, or combination of any of these) stand to lose the most. Another incident that came to my mind is the relationship between the data that goes into a predictive model. I recall reading about a self-driving Tesla running over a woman pushing a grocery cart at a pedestrian crossing. It was found that the training set didn't include any photos of a shopping cart, so the car failed to successfully categorize the woman as a human. This resulted in her death. We can extrapolate from this incident to other scenarios where the training sets are selected with a bias so heavy-handed that the non-normative identities/features are misclassifed and thus either are denied access to something they are entitled to (e.g., a civic/economic/social right) or face threat to their safety (e.g., identified as a terrorist and put in jail)
