@@ -58,7 +58,7 @@ The store wants to keep customer addresses. Propose two architectures for the CU
 ```
 Your answer...
 ```
-
+The two different architectures prioritize different data retention options. Type 1 SCD will overwrite history so we cannot look up the previous entries. Type 2 SCD will keep a record of all the entries and thus allows for back-dated queries. Type 2 will require the ability to log dates, so this will need to be included in the ERD
 ***
 
 ## Section 2:
@@ -193,3 +193,8 @@ Consider, for example, concepts of labour, bias, LLM proliferation, moderating c
 ```
 Your thoughts...
 ```
+My thoughts are below: 
+
+Technological advancements can create the illusion that human input is not critical to how the algorithms are defined and executed. With each layer of technological sophistication (iterative or non-iterative) the idea that humans had anything to do with the function and output of the algorithms becomes more improbable. For example, we often chat about whether AI is sentient and/or intelligent, however, despite all the speculation and discourse, we rarely visit foundational definitions for intelligence and sentience. We have been caught up too much in the hype and sheen of the advancements, and thus neglected to reconsider which definitions were included and which were excluded in the making. Bringing this response back to the Substack article we can find that hype and model improvements alone cannot live up to the complexity of the task at hand: working with fabric/textile. Just because we have certain algorithms that do certain task very efficiently (e.g., classifying objects as A vs. B), we cannot generalize to other tasks by default (e.g., executing complex and task-dependent motor output). Buying into the hype of Silicon Valley types is prone to generating disillusionment stemming from the discrepancy between the real-world task demands and the very human decisions dictating what kind of model of the world the algorithms is being trained in & for. The core ethical issue here is that such a discrepancy is not costless. As the "person subtree" example illustrates, some have their personhood denied, and some have it deemed unsavory. As our society gets more and more integrated with algorithm-driven tech, we have to be increasingly careful and proactive in having these ethical considerations. 
+
+Thanks
